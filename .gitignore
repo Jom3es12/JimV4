@@ -1,0 +1,13 @@
+# Dependency directories
+node_modules
+jspm_packages
+
+# npm cache directory
+.npm
+
+# Sensitive 
+config.json
+
+# Settings
+.jshintrc
+.vscode/
