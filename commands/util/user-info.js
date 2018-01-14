@@ -65,7 +65,7 @@ module.exports = class UserInfoCommand extends commando.Command {
                 ctx.fillText('• Is the creator of this bot.', 8, 152);
             } 
             if (user.id == '147508587382439937') {
-                ctx.fillStyle = '#78909c';
+                ctx.fillStyle = '#aa00c7';
                 ctx.fillText('• Is the great jatsu!.', 8, 137);
             }
             // send
