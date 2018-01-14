@@ -28,9 +28,9 @@ module.exports = class achievement extends commando.Command {
             [title, contents] = ["Achievement Get!", title];
         }
         let rnd = Math.floor((Math.random() * 39) + 1);
-        if (args.s.toLowerCase().includes("burn")) rnd = 38;
-        if (args.s.toLowerCase().includes("cookie")) rnd = 21;
-        if (args.s.toLowerCase().includes("cake")) rnd = 10;
+        if (args.string.toLowerCase().includes("burn")) rnd = 38;
+        if (args.string.toLowerCase().includes("cookie")) rnd = 21;
+        if (args.string.toLowerCase().includes("cake")) rnd = 10;
         if (title.length > 22 || contents.length > 22) return msg.edit("Max Length: 22 Characters.").then(msg.delete.bind(msg), 2000);
         const url = `https://www.minecraftskinstealer.com/achievement/a.php?i=${rnd}&h=${encodeURIComponent(title)}&t=${encodeURIComponent(contents)}`;
         snekfetch.get(url)
