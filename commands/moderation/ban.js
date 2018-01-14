@@ -51,7 +51,7 @@ module.exports = class ban extends commando.Command {
             }]
         };
         if (!msg.channel.permissionsFor(msg.client.user).has('BAN_MEMBERS')) return msg.channel.send('I don\'t have permission to ban members.');
-        if (msg.channel.permissionsFor(msg.author.id).has('BAN_MEMBERS')) return msg.reply('You don\'t have permission to ban members.');
+        if (!msg.channel.permissionsFor(msg.author.id).has('BAN_MEMBERS')) return msg.reply('You don\'t have permission to ban members.');
         if (args.member.id == msg.author.id) {
             return msg.channel.send('You can\'t ban yourself, are you nuts!');
         }

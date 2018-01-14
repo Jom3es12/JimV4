@@ -30,18 +30,15 @@ client.on("guildCreate", guild => {
         },
         welcomeMessage: '<<member>> has joined our server.',
         leaveMessage: '<<member>> left the server.',
-        'prefix': null,
         language: 'en'
     };
 
     MongoClient.connect(dbUrl, function(err, db) {
         if (err) throw err;
-        var collection = db.collection('documents');
-        collection.updateOne(defaultSettings, function(err, result) {
-            assert.equal(err, null);
-            assert.equal(1, result.result.n);
-            callback(result);
+        db.collection('guilds', function(err, collection) {
+            collection.insertOne(defaultSettings);
         });
+        db.close();
     });
 });
 
@@ -62,10 +59,10 @@ client.on("guildMemberAdd", member => {
 
         var defaultUserSettings = {
             userId: `${member.user.id}`,
-            warns: 0,
+            warns: '0',
             points: '10',
             tags: {
-                foo: 'bar'
+                'foo': 'bar'
             },
             kogamaData: {
                 brId: '',
@@ -77,9 +74,7 @@ client.on("guildMemberAdd", member => {
                 joinDate: ''
             }
         };
-        db.collection('users', function(err, collection) {
-            collection.insertOne(defaultSettings);
-        });
+        db.collection('users').insertOne(defaultSettings);
         var userQuery = { userId: `${member.user.id}` };
         db.close();
     });

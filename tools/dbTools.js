@@ -1,21 +1,52 @@
 const Discord = require('discord.js');
-const client = new Discord.Client();
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 const dbUrl = "mongodb://localhost:27017/jim";
 
+/**
+ * Gets a user's db data
+ * @param {msg} msg - uh 
+ * @param {message} message - message to log
+ */
 module.exports.modLog = function(msg, message) {
     MongoClient.connect(dbUrl, function(err, db) {
         if (err) throw err;
         var query = { guildId: `${msg.guild.id}` };
         db.collection(`guilds`).findOne(query, function(err, results) {
             if (!results) {
-                return msg.channel.send('Log channel not found');
+                return;
             } else {
                 msg.guild.channels.find('name', results.modLogChannel).send(message);
             }
         });
         db.close();
+    });
+};
+/**
+ * Gets a user's db data
+ * @param {string} userId - user's id
+ */
+module.exports.getUserData = (userId) => {
+    MongoClient.connect(dbUrl, function(err, db) {
+        db.collection(`users`).findOne({ userId: `${userId}` }, function(err, results) {
+            db.close();
+        });
+    });
+};
+/**
+ * Sets a user's db data
+ * @param {string} userId - user's unique id
+ * @param {object} dataObj - the data being set 
+ */
+module.exports.setUserData = (userId, dataObj) => {
+    var query = { 'userId': `${userId}` };
+    var values = { $set: dataObj };
+    MongoClient.connect(dbUrl, function(err, db) {
+        if (err) throw err;
+        db.collection("users").updateOne(query, values, function(err, res) {
+            if (err) throw err;
+            db.close();
+        });
     });
 };
 

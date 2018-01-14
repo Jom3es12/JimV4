@@ -43,7 +43,7 @@ module.exports = class mute extends commando.Command {
         const muteTime = args.time;
         const channel = msg.channel;
         if (!msg.channel.permissionsFor(msg.client.user).has('MANAGE_ROLES')) return msg.channel.send('I don\'t have permission to manage roles.');
-        if (msg.channel.permissionsFor(msg.author.id).has('KICK_MEMBERS')) return msg.reply('You don\'t have permission.');
+        if (!msg.channel.permissionsFor(msg.author.id).has('KICK_MEMBERS')) return msg.reply('You don\'t have permission.');
 
         if (!roles.find('name', 'jimmute')) { // make role if doesn't exist also set channel overwrites.
             if (!guild.members.get(msg.client.user.id).hasPermission('MANAGE_ROLES')) {
