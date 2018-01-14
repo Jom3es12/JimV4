@@ -9,9 +9,8 @@ const {
     version
 } = require('../../package');
 const fs = require("fs");
-const moment = require("moment");
-
-
+var moment = require("moment");
+var momentDurationFormatSetup = require("moment-duration-format");
 
 function getSysUptime() {
     return parseFloat(fs.readFileSync("/proc/uptime", {
