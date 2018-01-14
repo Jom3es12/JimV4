@@ -23,10 +23,7 @@ module.exports = class nickMe extends commando.Command {
 
     async run(msg, args) {
         const member = msg.guild.member(msg.author.id);
-        member.setNickname(args.name).then(x => {
-            msg.channel.send("Your nickname is now: " + args.name);
-        }).catch(x => {
-            msg.reply('I couldn\'t change your username. I may not have permission to');
-        });
+        if (!msg.channel.permissionsFor(msg.client.user).has('MANAGE_NICKNAMES')) return msg.channel.send('I don\'t have permission to change your nickname.');
+        member.setNickname(args.name);
     }
 };

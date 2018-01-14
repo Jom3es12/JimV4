@@ -11,10 +11,9 @@ module.exports = class UserInfoCommand extends commando.Command {
                 description: 'Gets information about a user.',
                 examples: ['user-info @Gingyr#3042', 'user-info Ag'],
                 guildOnly: true,
-
                 args: [{
                     key: 'member',
-                    label: 'user',
+                    label: 'member',
                     prompt: 'What user would you like to snoop on?',
                     type: 'member'
                 }]
@@ -45,7 +44,7 @@ module.exports = class UserInfoCommand extends commando.Command {
                 ctx.fillText(`❯ Member Details`, 5, 32);
                 ctx.font = '13px sans-serif';
                 ctx.fillText(`${member.nickname !== null ? `• Nickname: ${member.nickname}` : '• No nickname'}`, 8, 47);
-            ctx.fillText(`• Roles: ${member.roles.map(roles => `\`${roles.name}\``).join(', ')}`, 8, 62);
+            ctx.fillText(`• Roles: ${member.roles.map(roles => `${roles.name}`).join(', ').replace('@everyone, ', '')}`, 8, 62);
             ctx.font = 'bold 13px sans-serif';
             ctx.fillText(`❯ User Details`, 5, 77);
             ctx.font = '12px sans-serif';

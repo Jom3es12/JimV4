@@ -7,7 +7,7 @@ module.exports = class invite extends commando.Command {
     constructor(client) {
         super(client, {
             name: 'invite',
-            aliases: ['inv'],
+            aliases: ['inv', 'info'],
             group: 'general',
             memberName: 'invite',
             description: 'Gives the invite link.',
@@ -17,11 +17,13 @@ module.exports = class invite extends commando.Command {
 
     async run(msg, args) {
         const embed = {
-            "title": "**Invite**",
-            "url": 'http://jom3.es/jim',
-            "description": 'Invite me to your server!',
+            "title": "**JimBot**",
             "color": 1703737,
             "timestamp": timestamp,
+            "fields": [{
+                "name": 'Info',
+                "value": '**[Invite me to your server!](https://jom3.es/jim)** \n[Support Server Link](https://discord.gg/zfCx4X2)'
+            }],
             "author": {
                 "icon_url": msg.client.user.avatarURL,
                 "text": "Jimbot"
