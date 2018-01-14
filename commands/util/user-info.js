@@ -66,7 +66,7 @@ module.exports = class UserInfoCommand extends commando.Command {
             } 
             if (user.id == '147508587382439937') {
                 ctx.fillStyle = '#aa00c7';
-                ctx.fillText('• Is the great jatsu!.', 8, 137);
+                ctx.fillText('• Is the great jatsu!!', 8, 137);
             }
             // send
             msg.channel.send('', { files: [{ attachment: canvas.toBuffer(), name: 'user-info.png' }] });
