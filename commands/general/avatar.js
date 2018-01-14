@@ -6,8 +6,8 @@ module.exports = class avatar extends commando.Command {
             name: 'avatar',
             group: 'general',
             memberName: 'avatar',
-            description: 'get the avatar of a user',
-            examples: ['avatar @rubix'],
+            description: 'get the avatar url of a user. If getting a user from a different server, use their ID.',
+            examples: ['avatar user'],
             args: [{
                 key: 'user',
                 label: 'user',
@@ -18,10 +18,8 @@ module.exports = class avatar extends commando.Command {
     }
 
     async run(msg, args) {
-        try {
-            msg.reply(args.user.avatarURL);
-        } catch (x) {
-            msg.reply('This avatar is a default avatar.');
-        }
+        msg.reply(args.user.avatarURL).catch(e => {
+            msg.reply('This is a default avatar.');
+        });
     }
 };

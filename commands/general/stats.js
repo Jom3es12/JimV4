@@ -22,7 +22,6 @@ module.exports = class stats extends commando.Command {
     constructor(client) {
         super(client, {
             name: 'stats',
-            aliases: [],
             group: 'general',
             memberName: 'stats',
             description: 'gives stats about the bot',
@@ -33,27 +32,32 @@ module.exports = class stats extends commando.Command {
     async run(msg) {
         const processUptime = moment.duration(msg.client.uptime).format(" D [days], H [hrs], m [mins], s [secs]");
         const serverUptime = moment.duration(getSysUptime()).format(" D [days], H [hrs], m [mins], s [secs]");
-        const Image = Canvas.Image;
-        const canvas = new Canvas(400, 100);
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = `#002B36`;
-        ctx.strokeStyle = `#000`;
         const uptime = process.uptime();
-        ctx.fillRect(0, 0, 400, 100);
-        ctx.strokeRect(0, 0, 400, 100);
-        const theme = 'dark';
-        const fontColor = '#93A1A1';
-        ctx.font = '12px Consolas';
+        const memoryUsage = (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2);
+        // Canvas Setup
+        const Image = Canvas.Image;
+        const canvas = new Canvas(400, 115);
+        const ctx = canvas.getContext('2d');
+        // main bg
+        ctx.fillStyle = `#1565c0`;
+        ctx.fillRect(0, 0, 400, 115);
+        // title bar
+        ctx.fillStyle = '#003c8f';
+        ctx.fillRect(0, 0, 400, 17);
+        ctx.font = 'small-caps bold 12px sans-serif';
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText("JIM'S STATS ", 5, 13);
+        // body text
+        ctx.font = '12px sans-serif';
         ctx.scale(1, 1);
-        ctx.fillStyle = fontColor;
-        ctx.fillText(`• Meme Usage: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB`, 5, 17);
-        ctx.fillText("• Client Uptime: " + processUptime, 5, 32);
-        ctx.fillText("• Server Uptime: " + serverUptime, 5, 47);
-        ctx.fillText(`• Users: ${msg.client.users.size}`, 5, 62);
-        ctx.fillText(`• Servers: ${msg.client.guilds.size}`, 5, 77);
-        ctx.fillText(`• Channels: ${msg.client.channels.size}`, 5, 92);
-
-        // send attachment
-        msg.channel.send('', { files: [{ attachment: canvas.toBuffer(), }] });
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(`• Memory Usage: ${memoryUsage} MB`, 5, 32);
+        ctx.fillText("• Client Uptime: " + processUptime, 5, 47);
+        ctx.fillText("• Server Uptime: " + serverUptime, 5, 62);
+        ctx.fillText(`• Users: ${msg.client.users.size}`, 5, 77);
+        ctx.fillText(`• Servers: ${msg.client.guilds.size}`, 5, 92);
+        ctx.fillText(`• Channels: ${msg.client.channels.size}`, 5, 107);
+        // send image
+        msg.channel.send('', { files: [{ attachment: canvas.toBuffer(), }] }).catch(e => { msg.reply('Unable to send message, check my permissions.'); });
     }
 };

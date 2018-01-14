@@ -6,13 +6,13 @@ module.exports = class Simplify extends commando.Command {
     constructor(client) {
         super(client, {
             name: 'simplify',
-            aliases: [],
             group: 'math',
             memberName: 'simplify',
             description: 'Simplify expressions',
             details: oneLine `
                   Simplify mathmatical expressions using math.js 
             `,
+            format: '<expression>',
             examples: ['math 6905i/2 + 98'],
             args: [{
                 key: 'maths',

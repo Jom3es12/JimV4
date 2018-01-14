@@ -11,9 +11,7 @@ module.exports = class invite extends commando.Command {
             group: 'general',
             memberName: 'invite',
             description: 'Gives the invite link.',
-            details: oneLine `         
-            `,
-            examples: ['jim invite'],
+            examples: ['invite'],
         });
     }
 

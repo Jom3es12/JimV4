@@ -9,7 +9,7 @@ module.exports = class Btc extends commando.Command {
             aliases: ['btc'],
             group: 'general',
             memberName: 'btc',
-            description: 'Quick show of the btc price',
+            description: 'Quickly show the current bitcoin price.',
             details: oneLine `
                 Shows the sell average between the bitfinex, bitstamp and okcoin exchanges.
             `,

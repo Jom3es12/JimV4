@@ -15,7 +15,6 @@ module.exports = class Alt extends commando.Command {
                 label: 'alt code',
                 prompt: 'What\'s the alt code?',
                 type: 'integer',
-                infinite: true
             }]
         });
     }

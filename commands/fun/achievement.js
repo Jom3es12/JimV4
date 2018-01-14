@@ -11,7 +11,8 @@ module.exports = class achievement extends commando.Command {
             memberName: 'achievement',
             description: 'Generate a minecraft achievement.',
             guildOnly: false,
-            examples: ['achievement Title|Text (/achievement Achievement Get|Used a Command!)'],
+            format: '[Title Text]|<Achievement Text>',
+            examples: ['Oh wow you|Used a Command!', 'Baked a cake!'],
             args: [{
                 key: 'string',
                 label: 'string',

@@ -19,7 +19,6 @@ module.exports = class define extends commando.Command {
                 label: 'word',
                 prompt: 'What word will you define?',
                 type: 'string',
-
             }]
         });
     }

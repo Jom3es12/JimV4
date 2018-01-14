@@ -8,6 +8,7 @@ module.exports = class leet extends commando.Command {
             aliases: ['1337'],
             group: 'fun',
             memberName: 'leet',
+            format: '<text>',
             description: 'converts your message to leetspeak',
             examples: ['leet Cool message'],
         });

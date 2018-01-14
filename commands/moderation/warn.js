@@ -34,34 +34,28 @@ module.exports = class warn extends commando.Command {
     }
 
     async run(msg, args) {
-
         let member = args.member;
         let reason = args.reason;
-
-        if (checkMod(msg, msg.author) == false) {
-            return msg.channel.send('You don\'t have the mod Role.');
-        } else {
-            var embed = {
-                "title": "**Warned by: **",
-                "description": msg.author.username,
-                "color": 16730890,
-                "timestamp": moment().format(),
-                "footer": {
-                    "icon_url": msg.client.user.avatarURL,
-                    "text": "Jimbot"
-                },
-                "author": {
-                    "name": member.user.username,
-                    "icon_url": member.user.avatarURL,
-                },
-                "fields": [{
-                    "name": "Reason",
-                    "value": reason
-                }]
-            };
-            msg.channel.send(`${member.user.username}, you have been warned. \`${reason}\``);
-            modLog(msg, { embed: embed });
-
-        }
+        if (msg.channel.permissionsFor(msg.author).has('KICK_MEMBERS')) return msg.reply('You don\'t have permission to do this.');
+        var embed = {
+            "title": "**Warned by: **",
+            "description": msg.author.username,
+            "color": 16730890,
+            "timestamp": moment().format(),
+            "footer": {
+                "icon_url": msg.client.user.avatarURL,
+                "text": "Jimbot"
+            },
+            "author": {
+                "name": member.user.username,
+                "icon_url": member.user.avatarURL,
+            },
+            "fields": [{
+                "name": "Reason",
+                "value": reason
+            }]
+        };
+        msg.channel.send(`${member.user.username}, you have been warned. \`${reason}\``);
+        modLog(msg, { embed: embed });
     }
 };

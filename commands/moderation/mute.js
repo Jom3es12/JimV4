@@ -41,12 +41,10 @@ module.exports = class mute extends commando.Command {
         const roles = msg.guild.roles;
         const member = args.member;
         const muteTime = args.time;
-        console.log(muteTime);
         const channel = msg.channel;
-        console.log('command run ' + channel.name);
-        if (!guild.members.get(msg.author.id).hasPermission('KICK_MEMBERS')) {
-            return channel.send('You don\'t have the proper perms.');
-        }
+        if (!msg.channel.permissionsFor(msg.client.user).has('MANAGE_ROLES')) return msg.channel.send('I don\'t have permission to manage roles.');
+        if (msg.channel.permissionsFor(msg.author.id).has('KICK_MEMBERS')) return msg.reply('You don\'t have permission.');
+
         if (!roles.find('name', 'jimmute')) { // make role if doesn't exist also set channel overwrites.
             if (!guild.members.get(msg.client.user.id).hasPermission('MANAGE_ROLES')) {
                 channel.send('The `jimmute` role doesn\'t exist. I would make it, but I don\'t have permission.');
@@ -66,7 +64,9 @@ module.exports = class mute extends commando.Command {
                 channel.send('Success! Please try to mute again.');
             }
         } else { // the role already exists, so let's mute the user.
-            //  if (member.highestRole.calculatedPosition >= msg.guild.members.get(msg.author.id).highestRole.calculatedPosition) return channel.send('This user is higher than you.');
+            if (msg.guild.members.get(msg.author.id).highestRole.calculatedPosition > args.member.highestRole.calculatedPosition) {
+                return msg.channel.send('This member is higher than you.');
+            }
             // parse the time   
             var apiOptions = {
                 sessionId: msg.author.id

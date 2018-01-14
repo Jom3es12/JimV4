@@ -8,27 +8,21 @@ module.exports = class ban extends commando.Command {
     constructor(client) {
         super(client, {
             name: 'ban',
-            aliases: [],
             group: 'moderation',
             memberName: 'ban',
-            description: 'ban someone',
-            details: oneLine `
-             Bans a user from your server. Unless they're jatsu. 
-            `,
+            description: 'Ban a user from your server.',
+            guildOnly: true,
             examples: ['jim ban @user'],
-
             args: [{
                     key: 'member',
-                    prompt: 'Who gone get banned?',
+                    prompt: 'Who are you bannining?',
                     type: 'member',
-                    infinite: false
                 },
                 {
                     key: 'reason',
                     label: 'reason',
                     prompt: 'Why are you banning this user?',
                     type: 'string',
-                    infinite: false
                 }
 
             ]
@@ -56,7 +50,8 @@ module.exports = class ban extends commando.Command {
                 "value": reason
             }]
         };
-        if (!msg.guild.members.get(msg.client.user.id).hasPermission('BAN_MEMBERS')) return msg.channel.send('I do not have permission to ban members.');
+        if (!msg.channel.permissionsFor(msg.client.user).has('BAN_MEMBERS')) return msg.channel.send('I don\'t have permission to ban members.');
+        if (msg.channel.permissionsFor(msg.author.id).has('BAN_MEMBERS')) return msg.reply('You don\'t have permission to ban members.');
         if (args.member.id == msg.author.id) {
             return msg.channel.send('You can\'t ban yourself, are you nuts!');
         }
@@ -73,13 +68,8 @@ module.exports = class ban extends commando.Command {
             msg.channel.send('\`ERROR\`');
         } else {
             const guildMember = msg.guild.members.get(member.user.id);
-            if (msg.guild.members.get(msg.author.id).hasPermission('BAN_MEMBERS')) {
-                modLog(msg, { embed: embed });
-                guildMember.ban(`Banned by: ${msg.author.username} \n Reason: ${reason}`);
-            } else {
-                msg.channel.send("You're not allowed to do this...");
-            }
-
+            modLog(msg, { embed: embed });
+            guildMember.ban(`Banned by: ${msg.author.username} \n Reason: ${reason}`);
         }
     }
 };

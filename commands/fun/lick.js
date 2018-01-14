@@ -7,12 +7,13 @@ module.exports = class lick extends commando.Command {
             name: 'lick',
             aliases: [],
             group: 'fun',
+            guildOnly: true,
             memberName: 'lick',
             description: 'lick someone',
             examples: ['jim lick codrew'],
             args: [{
                 key: 'person',
-                label: '',
+                label: 'member',
                 prompt: "Who are you licking?",
                 type: 'member',
             }]

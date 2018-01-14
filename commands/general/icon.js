@@ -6,17 +6,16 @@ module.exports = class changeme extends commando.Command {
         super(client, {
             name: 'icon',
             group: 'general',
+            guildOnly: true,
             memberName: 'fun',
-            description: 'Gives you the link to the server icon',
-            examples: ['jim icon'],
+            description: 'Gives you the link to the server icon.',
+            examples: ['icon'],
         });
     }
 
     async run(msg, args) {
-        try {
-            msg.channel.send(msg.guild.iconURL);
-        } catch (x) {
-            msg.channel.send('This guild doesn\'t have an icon.');
-        }
+        msg.channel.send(msg.guild.iconURL).catch(e => {
+            msg.reply('This server doesn\'t have an icon.');
+        });
     }
 };

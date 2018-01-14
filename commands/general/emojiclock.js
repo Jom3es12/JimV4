@@ -11,7 +11,7 @@ module.exports = class clocl extends commando.Command {
             aliases: ['time'],
             group: 'general',
             memberName: 'clock',
-            description: 'tells time in emoji',
+            description: 'Tells you the time!',
             examples: ['clock', 'time'],
         });
     }

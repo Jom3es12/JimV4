@@ -8,6 +8,7 @@ module.exports = class purge extends commando.Command {
             aliases: ['del'],
             group: 'moderation',
             memberName: 'purge',
+            guildOnly: true,
             description: 'Deletes a bunch of messages, moderators only.',
 
             args: [{

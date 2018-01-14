@@ -1,7 +1,8 @@
 const commando = require('discord.js-commando');
 const oneLine = require('common-tags').oneLine;
 const config = require('../../config.json');
-const t = require('../../tools/t.js')
+const t = require('../../tools/t.js');
+const stripIndents = require('common-tags').stripIndents;
 
 module.exports = class iplocation extends commando.Command {
     constructor(client) {
@@ -34,15 +35,14 @@ module.exports = class iplocation extends commando.Command {
             msg.channel.send('Sorry this is not a valid IPV4 Address.');
         } else {
             iplocation(ip).then(function(res) {
-                let m = `
-\`\`\`asciidoc
-=== Results For ${ip} ===
-• Country :: ${res.country_name}
-• Region :: ${res.region_name}
-• City :: ${res.city}
-\`\`\`
-                    `;
-
+                let m = stripIndents `
+                \`\`\`asciidoc
+                • Country :: ${res.country_name}
+                • Region :: ${res.region_name}
+                • City :: ${res.city}
+                \`\`\`
+                === Results For ${ip} ===
+                `;
                 msg.channel.send(m);
             }).catch(err => {
                 console.error(err);

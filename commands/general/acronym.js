@@ -9,10 +9,10 @@ module.exports = class Cleverbot extends commando.Command {
             guildOnly: false,
             memberName: 'acronym',
             description: 'Gives you the definition for an acronym',
-            examples: ['jim acronym kogama'],
+            examples: ['acronym kogama', 'acro subpar'],
             args: [{
                 key: 'acronym',
-                label: 'acro',
+                label: 'word',
                 prompt: 'Which word did you want use?',
                 type: 'string'
             }]

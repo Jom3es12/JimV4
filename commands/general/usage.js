@@ -8,7 +8,7 @@ module.exports = class usage extends commando.Command {
             name: 'usage',
             group: 'general',
             memberName: 'usage',
-            description: 'Gives you the command usage for the provide command ',
+            description: 'Gives you the command usage for the provided command ',
             guildOnly: false,
             format: '[command]',
             args: [{

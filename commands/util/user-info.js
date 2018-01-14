@@ -22,54 +22,49 @@ module.exports = class UserInfoCommand extends commando.Command {
         }
 
         async run(msg, args) {
-                const member = args.member,
-                    user = member.user,
-                    Image = Canvas.Image,
-                    canvas = new Canvas(450, 200),
-                    ctx = canvas.getContext('2d');
-
-                // assign gradients to fill and stroke styles
-                ctx.fillStyle = `#002B36`;
-                ctx.strokeStyle = `#000`;
-
-                // draw shapes
-                ctx.fillRect(0, 0, 450, 200);
-                ctx.strokeRect(0, 0, 450, 200);
-
-                let theme = 'dark';
-                let fontColor = '#93A1A1';
-                ctx.font = '13px Consolas';
-                ctx.scale(1, 1);
-                ctx.patternQuality = 'billinear';
-                ctx.filter = 'bilinear';
-                ctx.antialias = 'subpixel';
-                ctx.fillStyle = fontColor;
-                var isJat = false;
-                if (user.id == '147508587382439937') isJat = true;
-
                 if (!msg.channel.permissionsFor(msg.client.user).hasPermission('ATTACH_FILES')) {
-                    msg.channel.send("I can't send pictures in this channel, yell at an admin to allow me to attach files.");
-                    msg.channel.send(`Info on ${user.tag} (ID: ${user.id}) \n 
-❯ Member Details
- ${member.nickname !== null ? ` • Nickname: ${member.nickname}` : ' • No nickname'}
-  • Roles: ${member.roles.map(roles => `\`${roles.name}\``).join(', ')}
-  • Joined at: ${member.joinedAt}
-❯ User Details
-  • Created at: ${user.createdAt}${user.bot ? '\n  • Is a bot account' : ''}
-  • Status: ${user.presence.status}
-  • Game: ${user.presence.game ? user.presence.game.name : 'None'}${user.id == '147508587382439937' ? '\n  • Is an amazing person <3' : ''}`)
-}
-else{
-        ctx.fillText(`Info on ${user.tag} (ID: ${user.id}) \n 
-❯ Member Details
- ${member.nickname !== null ? `  • Nickname: ${member.nickname}` : ' • No nickname'}
-   • Roles: ${member.roles.map(roles => `\`${roles.name}\``).join(', ')}
-   • Joined at: ${member.joinedAt}
-❯ User Details
-   • Created at: ${user.createdAt}${user.bot ? '\n  • Is a bot account' : ''}
-   • Status: ${user.presence.status}
-   • Game: ${user.presence.game != null ? user.presence.game.name : 'None'}${this.client.isOwner(user.id) ? '\n   • Is an owner of this bot.' : ''}`, 5, 15);
-        msg.channel.sendFile(canvas.toBuffer(), `user-info_for_${user.username}.png`);
-	}
-}
+                    return msg.channel.send("I can't attach files in this channel.");
+                }
+                const member = args.member;
+                const user = member.user;
+                const Image = Canvas.Image;
+                const canvas = new Canvas(450, 175);
+                const ctx = canvas.getContext('2d');
+                // main bg
+                ctx.fillStyle = `#1565c0`;
+                ctx.fillRect(0, 0, 450, 200);
+                // title bar 
+                ctx.fillStyle = '#003c8f';
+                ctx.fillRect(0, 0, 450, 17);
+                ctx.font = 'small-caps bold 12px sans-serif';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(`Info on ${user.tag} (ID: ${user.id})`, 5, 13);
+                // body 
+                ctx.font = 'bold 13px sans-serif';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(`❯ Member Details`, 5, 32);
+                ctx.font = '13px sans-serif';
+                ctx.fillText(`${member.nickname !== null ? `• Nickname: ${member.nickname}` : '• No nickname'}`, 8, 47);
+            ctx.fillText(`• Roles: ${member.roles.map(roles => `\`${roles.name}\``).join(', ')}`, 8, 62);
+            ctx.font = 'bold 13px sans-serif';
+            ctx.fillText(`❯ User Details`, 5, 77);
+            ctx.font = '12px sans-serif';
+            ctx.fillText(`• Created at: ${user.createdAt}`, 8, 92);
+
+            ctx.fillText(`• Status: ${user.presence.status}`, 8, 107);
+            ctx.fillText(`• Game: ${user.presence.game != null ? user.presence.game.name : 'None'}`, 8, 122);
+            if(this.client.isOwner(user.id)) {
+                ctx.fillText('• Is an admin of this bot.', 8, 137);
+            }
+            if (user.bot) {
+                ctx.fillStyle = '#ff0000';
+                ctx.fillText('• Is a robot.', 8, 152);
+            }
+            if (user.id == '144491485981704193') {
+                ctx.fillStyle = '#ff7043';
+                ctx.fillText('• Is the creator of this bot.', 8, 152);
+            }
+            // send
+            msg.channel.send('', { files: [{ attachment: canvas.toBuffer(), name: 'user-info.png' }] });
+    }
 };

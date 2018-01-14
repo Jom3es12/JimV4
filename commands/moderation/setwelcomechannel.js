@@ -28,20 +28,18 @@ module.exports = class setwelcomechannel extends commando.Command {
     }
 
     async run(msg, args) {
-        if (msg.guild.members.get(msg.author.id).hasPermission('ADMINISTRATOR')) {
-            var query = { 'guildId': `${msg.guild.id}` };
-            var values = { $set: { 'welcomeChannel': `${args.channel.name}` } };
-            if (!msg.guild.channels.find("name", args.channel))
-                MongoClient.connect(dbUrl, function(err, db) {
+        if (msg.channel.permissionsFor(msg.author.id).has('ADMINISTRATOR')) return msg.reply('You don\'t have permission to do this.');
+        var query = { 'guildId': `${msg.guild.id}` };
+        var values = { $set: { 'welcomeChannel': `${args.channel.name}` } };
+        if (!msg.guild.channels.find("name", args.channel))
+            MongoClient.connect(dbUrl, function(err, db) {
+                if (err) throw err;
+                db.collection("guilds").updateOne(query, values, function(err, res) {
                     if (err) throw err;
-                    db.collection("guilds").updateOne(query, values, function(err, res) {
-                        if (err) throw err;
-                        msg.channel.send(`Set channel to: \`${args.channel.name}\``);
-                        db.close();
-                    });
+                    msg.channel.send(`Set channel to: \`${args.channel.name}\``);
+                    db.close();
                 });
-        } else {
-            return msg.channel.send('You\'re not an admin.');
-        }
+            });
+
     }
 };

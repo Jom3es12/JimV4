@@ -9,6 +9,7 @@ module.exports = class Math extends commando.Command {
             group: 'math',
             memberName: 'math',
             description: 'Evaluate math.',
+            format: '<expression>',
             examples: ['jim math 6905/2'],
             args: [{
                 key: 'maths',
