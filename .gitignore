@@ -11,3 +11,4 @@ config.json
 # Settings
 .jshintrc
 .vscode/
+todo

@@ -3,7 +3,7 @@ const checkMod = require('../../tools/dbTools').checkMod;
 const commando = require('discord.js-commando');
 const config = require('../../config.json');
 const oneLine = require('common-tags').oneLine;
-const moment = require('moment')
+const moment = require('moment');
 module.exports = class warn extends commando.Command {
     constructor(client) {
         super(client, {

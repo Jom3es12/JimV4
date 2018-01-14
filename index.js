@@ -77,19 +77,10 @@ client.on("guildMemberAdd", member => {
                 joinDate: ''
             }
         };
-        var insertUser = function() {
-            db.collection('users', function(err, collection) {
-                collection.insert(defaultSettings);
-            });
-        };
-        var userQuery = { userId: `${member.user.id}` };
-        db.collection(`users`).findOne(userQuery, function(err, results) {
-            if (!results) {
-                insertUser();
-            } else {
-                return;
-            }
+        db.collection('users', function(err, collection) {
+            collection.insertOne(defaultSettings);
         });
+        var userQuery = { userId: `${member.user.id}` };
         db.close();
     });
 });
@@ -114,9 +105,10 @@ client.on('guildMemberRemove', (member) => {
     });
 });
 
+// Track users every 300000ms (5 minutes lol)
 setInterval(function() {
     stathat.trackEZValue("jtas1999@gmail.com", "users", client.users.size, function(status, json) {});
-}, 10000);
+}, 300000);
 
 client
     .on('error', console.error)

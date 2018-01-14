@@ -34,8 +34,8 @@ module.exports = class purge extends commando.Command {
         const num = args.num;
         if (num > 100) return msg.channel.send('Number must be less than 100.');
         if (num <= 1) return msg.channel.send('You can\'t delete nothing.');
-        if ((msg.channel.permissionsFor(msg.client.user).bitfield & 8192) === 8192) return msg.channel.send('Channel override encountered.')
-        if (msg.guild.members.get(msg.author.id).hasPermission('MANAGE_MESSAGES')) {
+        if (!msg.channel.permissionsFor(msg.client.user).has('MANAGE_MESSAGES')) return msg.channel.send('I can\'t delete messages in this channel');
+        if (msg.channel.permissionsFor(msg.author).has('MANAGE_MESSAGES')) {
             msg.delete();
             msg.channel.fetchMessages({
                 limit: num
@@ -50,7 +50,6 @@ module.exports = class purge extends commando.Command {
                     MSG.delete();
                 });
                 const filter = m => m.author.id == msg.author.id;
-
                 msg.channel.awaitMessages(aMessage => msg.author.id === aMessage.author.id, { max: 1, time: 30000, errors: ['time'] })
                     .then(collected => {
                         var stupid = collected.array()[0];
@@ -59,7 +58,9 @@ module.exports = class purge extends commando.Command {
                                 ws(2);
                                 MSG.delete();
                             });
-                            msg.channel.bulkDelete(msgArr);
+                            msg.channel.bulkDelete(msgArr).catch(
+                                msg.reply('You can\'t delete messages older than 14 days.')
+                            );
                             stupid.delete();
                         } else {
                             msg.channel.send('Canceled the purge.').then(MSG => {
@@ -73,6 +74,7 @@ module.exports = class purge extends commando.Command {
                             MSG.delete();
                         });
                     });
+
             });
         } else {
             msg.channel.send('You are not allowed to do this.').then(MSG => {
@@ -82,4 +84,5 @@ module.exports = class purge extends commando.Command {
         }
     }
 };
+
 // I'm trying to figure out why I even bother.,

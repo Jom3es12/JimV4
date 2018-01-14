@@ -10,6 +10,7 @@ module.exports = class usage extends commando.Command {
             memberName: 'usage',
             description: 'Gives you the command usage for the provide command ',
             guildOnly: false,
+            format: '[command]',
             args: [{
                 key: 'command',
                 label: 'command',
@@ -19,7 +20,7 @@ module.exports = class usage extends commando.Command {
         });
     }
 
-    async run(msg) {
+    async run(msg, args) {
         msg.channel.send(msg.guild.commandUsage(args.command));
     }
 };

@@ -1,6 +1,8 @@
 const commando = require('discord.js-commando');
 const oneLine = require('common-tags').oneLine;
 const moment = require('moment');
+var timestamp = new Date();
+timestamp.toISOString();
 module.exports = class invite extends commando.Command {
     constructor(client) {
         super(client, {
@@ -21,12 +23,12 @@ module.exports = class invite extends commando.Command {
             "url": 'http://jom3.es/jim',
             "description": 'Invite me to your server!',
             "color": 1703737,
-            "timestamp": moment().format('MMMM Do YYYY, h:mm:ss a'),
+            "timestamp": timestamp,
             "author": {
                 "icon_url": msg.client.user.avatarURL,
                 "text": "Jimbot"
             }
         };
-        msg.channel.send(embed);
+        msg.channel.send('', { embed: embed });
     }
 };

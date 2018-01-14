@@ -13,7 +13,7 @@ module.exports = class Alt extends commando.Command {
             args: [{
                 key: 'code',
                 label: 'alt code',
-                prompt: ' prompt',
+                prompt: 'What\'s the alt code?',
                 type: 'integer',
                 infinite: true
             }]
@@ -21,6 +21,6 @@ module.exports = class Alt extends commando.Command {
     }
 
     async run(msg, args) {
-        msg.channel.send(String.fromCharCode(args.code))
+        msg.channel.send(String.fromCharCode(args.code));
     }
 };
