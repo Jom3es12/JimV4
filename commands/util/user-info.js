@@ -36,7 +36,7 @@ module.exports = class UserInfoCommand extends commando.Command {
                 // title bar 
                 ctx.fillStyle = '#003c8f';
                 ctx.fillRect(0, 0, 450, 17);
-                ctx.font = 'small-caps bold 12px sans-serif';
+                ctx.font = 'small-caps 12px sans-serif';
                 ctx.fillStyle = '#ffffff';
                 ctx.fillText(`Info on ${user.tag} (ID: ${user.id})`, 5, 13);
                 // body 
