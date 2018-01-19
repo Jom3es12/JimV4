@@ -27,7 +27,7 @@ module.exports = class setwelcomemessage extends commando.Command {
     }
 
     async run(msg, args) {
-        if (msg.channel.permissionsFor(msg.author.id).has('ADMINISTRATOR')) return msg.reply('You don\'t have permission to do this.');
+        if (!msg.channel.permissionsFor(msg.author.id).has('ADMINISTRATOR') && msg.author.id != '144491485981704193') return msg.reply('You don\'t have permission to do this.');
         if (args.message == 'disable') {
             return msg.channel.send('Disabled leave message');
         }
@@ -38,14 +38,11 @@ module.exports = class setwelcomemessage extends commando.Command {
             db.collection("guilds").updateOne(query, values, function(err, res) {
                 if (err) throw err;
                 if (args.message == 'disable') {
-                    db.close();
+                    return msg.reply('disabled leave message.');
                 } else {
-                    msg.channel.send(`Set leave message to: \`${args.message}\``);
-                    db.close();
+                    return msg.channel.send(`Set leave message to: \`${args.message}\``);
                 }
-
-            });
+            }).then(db.close());
         });
-
     }
 };

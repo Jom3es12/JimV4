@@ -8,7 +8,6 @@ const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 const dbUrl = "mongodb://localhost:27017/jim";
 var util = require('util');
-
 const client = new commando.Client({
     owner: config.owners,
     commandPrefix: config.prefix,
@@ -17,33 +16,35 @@ const client = new commando.Client({
 });
 
 process.on('unhandledRejection', err => console.error(`Uncaught Promise Error: \n${err.stack}`));
+// connect to mongo to check for client events
+MongoClient.connect(dbUrl, function(err, db) {
+    client.on("guildCreate", guild => {
+        var defaultGuildSettings = {
+            guildId: `${guild.id}`,
+            modLogChannel: "mod-log",
+            welcomeChannel: "mod-log",
+            modRole: "Moderator",
+            favorite: false,
+            tags: {
+                foo: 'bar'
+            },
+            welcomeMessage: '<<member>> has joined our server.',
+            leaveMessage: '<<member>> left the server.',
+            language: 'en'
+        };
 
-client.on("guildCreate", guild => {
-    var defaultSettings = {
-        guildId: `${guild.id}`,
-        modLogChannel: "mod-log",
-        welcomeChannel: "mod-log",
-        modRole: "Moderator",
-        favorite: false,
-        tags: {
-            foo: 'bar'
-        },
-        welcomeMessage: '<<member>> has joined our server.',
-        leaveMessage: '<<member>> left the server.',
-        language: 'en'
-    };
-
-    MongoClient.connect(dbUrl, function(err, db) {
         if (err) throw err;
-        db.collection('guilds', function(err, collection) {
-            collection.insertOne(defaultSettings);
+        var guildQuery = { guildId: `${guild.id}` };
+        db.collection(`guilds`).findOne(guildQuery, function(err, results) {
+            if (!results) {
+                db.collection('guilds').insertOne(defaultUserSettings);
+            } else {
+                console.log('Guild already exists in database.');
+            }
         });
-        db.close();
     });
-});
 
-client.on("guildMemberAdd", member => {
-    MongoClient.connect(dbUrl, function(err, db) {
+    client.on("guildMemberAdd", member => {
         if (err) throw err;
         var query = { guildId: `${member.guild.id}` };
         db.collection(`guilds`).findOne(query, function(err, results) {
@@ -59,7 +60,7 @@ client.on("guildMemberAdd", member => {
 
         var defaultUserSettings = {
             userId: `${member.user.id}`,
-            warns: '0',
+            warns: '[]',
             points: '10',
             tags: {
                 'foo': 'bar'
@@ -72,16 +73,31 @@ client.on("guildMemberAdd", member => {
             robloxData: {
                 id: '',
                 joinDate: ''
+            },
+            battleData: {
+                weapons: [],
+                armor: [],
+                kills: 0,
+                deaths: 0
             }
         };
-        db.collection('users').insertOne(defaultSettings);
-        var userQuery = { userId: `${member.user.id}` };
-        db.close();
-    });
-});
 
-client.on('guildMemberRemove', (member) => {
-    MongoClient.connect(dbUrl, function(err, db) {
+        var userQuery = { userId: `${member.user.id}` };
+        db.collection(`users`).findOne(userQuery, function(err, results) {
+            if (!results) {
+                db.collection('users').insertOne(defaultUserSettings).catch(e => {
+                    console.log('It didn\'t work');
+                });
+
+            } else {
+                console.log('User already exists in database.');
+            }
+        });
+
+    });
+
+    client.on('guildMemberRemove', (member) => {
+
         if (err) throw err;
         var query = { guildId: `${member.guild.id}` };
         db.collection(`guilds`).findOne(query, function(err, results) {
@@ -96,9 +112,11 @@ client.on('guildMemberRemove', (member) => {
                 member.guild.channels.find('name', results.welcomeChannel).send(welcomeMessage);
             }
         });
-        db.close();
-    });
+        // mongodb's closing bracket    
+    }); // mongodb's closing bracket  
+    // mongodb's closing bracket  
 });
+
 
 // Track users every 300000ms (5 minutes lol)
 setInterval(function() {
@@ -155,7 +173,9 @@ client.registry
     .registerGroup('general', 'General')
     .registerGroup('fun', 'Fun')
     .registerGroup('math', 'Math')
+    .registerGroup('battle', 'Battle System')
     .registerGroup('moderation', 'Moderation')
+    .registerGroup('tags', 'Tag Systen')
     .registerCommandsIn(path.join(__dirname, 'commands'));
 
 client.login(config.token);

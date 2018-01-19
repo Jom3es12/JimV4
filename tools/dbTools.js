@@ -19,7 +19,6 @@ module.exports.modLog = function(msg, message) {
                 msg.guild.channels.find('name', results.modLogChannel).send(message);
             }
         });
-        db.close();
     });
 };
 /**
@@ -28,9 +27,7 @@ module.exports.modLog = function(msg, message) {
  */
 module.exports.getUserData = (userId) => {
     MongoClient.connect(dbUrl, function(err, db) {
-        db.collection(`users`).findOne({ userId: `${userId}` }, function(err, results) {
-            db.close();
-        });
+        db.collection(`users`).findOne({ userId: `${userId}` }, function(err, results) {});
     });
 };
 /**
@@ -45,7 +42,7 @@ module.exports.setUserData = (userId, dataObj) => {
         if (err) throw err;
         db.collection("users").updateOne(query, values, function(err, res) {
             if (err) throw err;
-            db.close();
+
         });
     });
 };

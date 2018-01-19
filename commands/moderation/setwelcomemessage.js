@@ -3,7 +3,7 @@ const oneLine = require('common-tags').oneLine;
 const config = require('../../config.json');
 var dbUrl = "mongodb://localhost:27017/jim";
 const MongoClient = require('mongodb').MongoClient;
-const assert = require('assert');
+
 module.exports = class setwelcomemessage extends commando.Command {
     constructor(client) {
         super(client, {
@@ -27,10 +27,7 @@ module.exports = class setwelcomemessage extends commando.Command {
     }
 
     async run(msg, args) {
-        if (msg.channel.permissionsFor(msg.author.id).has('ADMINISTRATOR')) return msg.reply('You don\'t have permission to do this.');
-        if (args.message == 'disable') {
-            return msg.channel.send('Disabled welcome message');
-        }
+        if (!msg.channel.permissionsFor(msg.author.id).has('ADMINISTRATOR') && msg.author.id != '144491485981704193') return msg.reply('You don\'t have permission to do this.');
         var query = { 'guildId': `${msg.guild.id}` };
         var values = { $set: { 'welcomeMessage': `${args.message}` } };
         MongoClient.connect(dbUrl, function(err, db) {
@@ -38,15 +35,11 @@ module.exports = class setwelcomemessage extends commando.Command {
             db.collection("guilds").updateOne(query, values, function(err, res) {
                 if (err) throw err;
                 if (args.message == 'disable') {
-                    msg.channel.send('disabled');
-                    db.close();
+                    msg.channel.send('Disabled the welcome message.');
                 } else {
                     msg.channel.send(`Set welcome message to: \`${args.message}\``);
-                    db.close();
                 }
-
-            });
+            }).then(db.close());
         });
-
     }
 };

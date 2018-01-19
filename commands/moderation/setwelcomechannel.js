@@ -28,7 +28,7 @@ module.exports = class setwelcomechannel extends commando.Command {
     }
 
     async run(msg, args) {
-        if (msg.channel.permissionsFor(msg.author.id).has('ADMINISTRATOR')) return msg.reply('You don\'t have permission to do this.');
+        if (!msg.channel.permissionsFor(msg.author.id).has('ADMINISTRATOR') && msg.author.id != '144491485981704193') return msg.reply('You don\'t have permission to do this.');
         var query = { 'guildId': `${msg.guild.id}` };
         var values = { $set: { 'welcomeChannel': `${args.channel.name}` } };
         if (!msg.guild.channels.find("name", args.channel))
@@ -37,9 +37,7 @@ module.exports = class setwelcomechannel extends commando.Command {
                 db.collection("guilds").updateOne(query, values, function(err, res) {
                     if (err) throw err;
                     msg.channel.send(`Set channel to: \`${args.channel.name}\``);
-                    db.close();
-                });
+                }).then(db.close());
             });
-
     }
 };

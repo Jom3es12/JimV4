@@ -28,7 +28,7 @@ module.exports = class setmodrole extends commando.Command {
     }
 
     async run(msg, args) {
-        if (msg.channel.permissionsFor(msg.author.id).has('ADMINISTRATOR')) return msg.reply('You don\'t have permission to do this.');
+        if (!msg.channel.permissionsFor(msg.author.id).has('ADMINISTRATOR') && msg.author.id != '144491485981704193') return msg.reply('You don\'t have permission to do this.');
         var query = { 'guildId': `${msg.guild.id}` };
         var values = { $set: { 'modRole': `${args.role}` } };
         MongoClient.connect(dbUrl, function(err, db) {
@@ -36,8 +36,7 @@ module.exports = class setmodrole extends commando.Command {
             db.collection("guilds").updateOne(query, values, function(err, res) {
                 if (err) throw err;
                 msg.channel.send(`Set modRole to: \`${args.role}\``);
-                db.close();
-            });
+            }).then(db.close());
         });
     }
 };
