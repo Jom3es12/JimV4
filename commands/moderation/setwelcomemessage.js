@@ -34,12 +34,12 @@ module.exports = class setwelcomemessage extends commando.Command {
             if (err) throw err;
             db.collection("guilds").updateOne(query, values, function(err, res) {
                 if (err) throw err;
-                if (args.message == 'disable') {
-                    msg.channel.send('Disabled the welcome message.');
-                } else {
-                    msg.channel.send(`Set welcome message to: \`${args.message}\``);
-                }
-            }).then(db.close());
+            });
+            if (args.message == 'disable') {
+                msg.channel.send('Disabled the welcome message.');
+            } else {
+                msg.channel.send(`Set welcome message to: \`${args.message}\``);
+            }
         });
     }
 };

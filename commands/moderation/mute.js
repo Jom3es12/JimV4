@@ -2,7 +2,7 @@ const commando = require('discord.js-commando');
 const oneLine = require('common-tags').oneLine;
 const config = require('../../config.json');
 const apiai = require('apiai');
-const app = apiai("ef1a3c0bd55a4635b20c0c07335f157d");
+const app = apiai(config.diagflowToken);
 const muteEmitter = require('../../events/eventBus').muteEmitter;
 
 module.exports = class mute extends commando.Command {
@@ -71,8 +71,6 @@ module.exports = class mute extends commando.Command {
             var apiOptions = {
                 sessionId: msg.author.id
             };
-            const apiai = require('apiai');
-            const app = apiai(config.diagflowToken);
             var request = app.textRequest(args.time, apiOptions);
 
             request.on('response', function(response) {
