@@ -64,7 +64,7 @@ module.exports = class mute extends commando.Command {
                 channel.send('Success! Please try to mute again.');
             }
         } else { // the role already exists, so let's mute the user.
-            if (msg.guild.members.get(msg.author.id).highestRole.calculatedPosition > args.member.highestRole.calculatedPosition) {
+            if (msg.guild.members.get(msg.author.id).highestRole.calculatedPosition < args.member.highestRole.calculatedPosition) {
                 return msg.channel.send('This member is higher than you.');
             }
             // parse the time   

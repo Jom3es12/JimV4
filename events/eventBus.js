@@ -29,11 +29,10 @@ muteEmitter.on('newMute', muteData => {
             muteEmitter.emit('muteEnd', muteData);
         }
         if (!member.roles.find('name', 'jimmute')) {
-            stop()
+            stop();
             return console.log('Member doesn\'t have role.');
         } else return;
-    };
-
+    }
 });
 // I'm just glad it works.
 muteEmitter.on('muteEnd', muteData => {
@@ -43,7 +42,6 @@ muteEmitter.on('muteEnd', muteData => {
     if (!member.roles.find('name', 'jimmute')) return console.log('Member doesn\'t have role.');
     return member.removeRole(muteRole, `Unmuted ${member.user.username}.`);
 });
-
 client.login(config.token);
 
 module.exports = {
