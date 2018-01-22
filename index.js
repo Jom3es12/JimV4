@@ -54,7 +54,7 @@ MongoClient.connect(dbUrl, function(err, db) {
                 if (!member.guild.channels.find('name', results.welcomeChannel)) return;
                 if (results.leaveMessage == 'disable') return;
                 var welcomeMessage = results.welcomeMessage.replace('<<member>>', member.user.username);
-                member.guild.channels.find('name', results.welcomeChannel).send(welcomeMessage);
+                member.guild.channels.find('name', results.welcomeChannel).send(welcomeMessage).catch(() => console.log('oWo, what\'s this?'));
             }
         });
 
@@ -109,12 +109,10 @@ MongoClient.connect(dbUrl, function(err, db) {
                 if (!member.guild.channels.find('name', results.welcomeChannel)) return;
                 if (results.leaveMessage == 'disable') return;
                 var welcomeMessage = results.leaveMessage.replace('<<member>>', member.user.username);
-                member.guild.channels.find('name', results.welcomeChannel).send(welcomeMessage);
+                member.guild.channels.find('name', results.welcomeChannel).send(welcomeMessage).catch(() => console.log('oWo, what\'s this?'));
             }
         });
-        // mongodb's closing bracket    
-    }); // mongodb's closing bracket  
-    // mongodb's closing bracket  
+    });
 });
 
 

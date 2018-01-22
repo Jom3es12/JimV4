@@ -3,7 +3,9 @@ const oneLine = require('common-tags').oneLine;
 const config = require('../../config.json');
 const apiai = require('apiai');
 const app = apiai(config.diagflowToken);
+const modLog = require('../../tools/dbTools').modLog;
 const muteEmitter = require('../../events/eventBus').muteEmitter;
+const moment = require('moment');
 
 module.exports = class mute extends commando.Command {
     constructor(client) {
@@ -100,9 +102,27 @@ module.exports = class mute extends commando.Command {
                         guildId: `${guild.id}`
                     };
                     // emit newMute with the mute data
-                    console.log(muteData);
-                    channel.send(`Muted ${member.user.username} for ${resolvedTime.amount}${timeUnit}`);
                     muteEmitter.emit('newMute', muteData);
+                    var embed = {
+                        "title": "**Muted by: **",
+                        "description": msg.author.username,
+                        "color": 16730890,
+                        "timestamp": moment().format(),
+                        "footer": {
+                            "icon_url": msg.client.user.avatarURL,
+                            "text": "Jimbot"
+                        },
+                        "author": {
+                            "name": member.user.username,
+                            "icon_url": member.user.avatarURL,
+                        },
+                        "fields": [{
+                            "name": "Mute Time",
+                            "value": `${resolvedTime.amount}${timeUnit}`
+                        }]
+                    };
+                    channel.send(`Muted ${member.user.username} for ${resolvedTime.amount}${timeUnit}`);
+                    modLog(msg, { embed: embed });
                 } else {
                     return channel.send('I don\'t understand the mute time.');
                 }
