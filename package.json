@@ -1,6 +1,6 @@
 {
     "name": "jimbot",
-    "version": "4.2.4",
+    "version": "3.5.7",
     "description": "A sweet bot for discord",
     "main": "index.js",
     "scripts": {
@@ -21,7 +21,7 @@
         "acronym-maker": "^1.0.1",
         "apiai": "^4.0.3",
         "btc-stats": "0.0.2",
-        "canvas": "^1.6.5",
+        "canvas": "^2.0.0-alpha.9",
         "chrono-node": "^1.3.1",
         "common-tags": "^1.4.0",
         "cool-ascii-faces": "^1.3.4",
@@ -32,12 +32,13 @@
         "discord.js": "^11.0.0",
         "discord.js-commando": "^0.9.0",
         "ip-location": "^1.0.1",
+        "jokesearch": "^1.0.5",
         "leet": "^1.3.0",
         "mathjs": "^3.10.1",
         "moment": "^2.18.1",
         "moment-duration-format": "^1.3.0",
         "money": "^0.2.0",
-        "mongodb": "^2.2.33",
+        "mongodb": "2.2.33",
         "natural-synaptic": "^1.0.1",
         "node-emoji-clock": "^0.1.0",
         "node-opus": "^0.2.6",
@@ -46,11 +47,9 @@
         "random-gen": "^0.1.0",
         "request": "^2.81.0",
         "request-promise": "^4.2.0",
-        "simple-youtube-api": "^2.1.0",
         "snekfetch": "^3.5.8",
         "stathat": "0.0.8",
         "uws": "^0.14.0",
-        "wait-sync": "^1.0.1",
-        "ytdl-core": "^0.10.3"
+        "wait-sync": "^1.0.1"
     }
 }

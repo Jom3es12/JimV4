@@ -82,15 +82,9 @@ module.exports = class LookUpMinecraftServer extends commando.Command {
 
         mcClient.on('timeout', () => {
             mcClient.end();
-            process.exit();
         });
         mcClient.on('error', (err) => {
-            if (err.code == "ENOTFOUND") {
-                return msg.reply(`Couldn't resolve the address: \`${args.address}\``);
-            }
-            if (err.code == "ECONNREFUSED") {
-                return msg.reply("Unable to connect to port " + port + ".");
-            }
+            msg.reply(`Error: \`${err}\``);
         });
     }
 };

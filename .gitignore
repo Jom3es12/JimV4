@@ -1,6 +1,7 @@
 # Dependency directories
 node_modules
 jspm_packages
+private_modules
 
 # npm cache directory
 .npm
