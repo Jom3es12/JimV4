@@ -3,11 +3,9 @@ const oneLine = require('common-tags').oneLine;
 const Discord = require("discord.js");
 const path = require('path');
 const request = require('request-promise');
-const Canvas = require('canvas');
+const { createCanvas } = require('canvas');
 const config = require('../../config.json');
-const {
-    version
-} = require('../../package');
+const { version } = require('../../package');
 const fs = require("fs");
 var moment = require("moment");
 var momentDurationFormatSetup = require("moment-duration-format");
@@ -22,7 +20,7 @@ module.exports = class stats extends commando.Command {
     constructor(client) {
         super(client, {
             name: 'stats',
-            group: 'general',
+            group: 'util',
             memberName: 'stats',
             description: 'gives stats about the bot',
             examples: ['stats'],
@@ -35,8 +33,7 @@ module.exports = class stats extends commando.Command {
         const uptime = process.uptime();
         const memoryUsage = (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2);
         // Canvas Setup
-        const Image = Canvas.Image;
-        const canvas = new Canvas(400, 115);
+        const canvas = createCanvas(400, 115);
         const ctx = canvas.getContext('2d');
         // main bg
         ctx.fillStyle = `#1565c0`;

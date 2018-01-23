@@ -1,6 +1,6 @@
 const stripIndents = require('common-tags').stripIndents;
 const commando = require('discord.js-commando');
-const Canvas = require('canvas');
+const { createCanvas } = require('canvas');
 module.exports = class UserInfoCommand extends commando.Command {
         constructor(client) {
             super(client, {
@@ -26,8 +26,7 @@ module.exports = class UserInfoCommand extends commando.Command {
                 }
                 const member = args.member;
                 const user = member.user;
-                const Image = Canvas.Image;
-                const canvas = new Canvas(450, 175);
+                var canvas = createCanvas(450, 175);
                 const ctx = canvas.getContext('2d');
                 // main bg
                 ctx.fillStyle = `#1565c0`;

@@ -51,6 +51,7 @@ module.exports = class LookUpMinecraftServer extends commando.Command {
                     motd = server_info[3].replace(/\u0000/g, '');
                     current_players = server_info[4].replace(/\u0000/g, '');
                     max_players = server_info[5].replace(/\u0000/g, '');
+                    // create canvas
                     var canvas = createCanvas(400, 100),
                         ctx = canvas.getContext('2d');
                     // main bg
