@@ -16,7 +16,9 @@ module.exports.modLog = function(msg, message) {
             if (!results) {
                 return;
             } else {
-                msg.guild.channels.find('name', results.modLogChannel).send(message);
+                try {
+                    msg.guild.channels.find('name', results.modLogChannel).send(message);
+                } catch (x) { console.log('Channel not found'); }
             }
         });
     });
