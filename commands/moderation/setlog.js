@@ -33,7 +33,7 @@ module.exports = class setLog extends commando.Command {
         if (!msg.channel.permissionsFor(msg.author.id).has('ADMINISTRATOR') && msg.author.id != '144491485981704193') return msg.reply('You don\'t have permission to do this.');
         const Guild = require('../../models/guildModel');
         Guild.findOne({ guildId: msg.guild.id }, function(err, doc) {
-            doc.modLogChannel = args.channel;
+            doc.modLogChannel = args.channel.name;
             doc.save();
         });
         msg.reply(`Set log channel to ${args.channel}`);
