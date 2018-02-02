@@ -1,26 +1,22 @@
 const Discord = require('discord.js');
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
-const dbUrl = "mongodb://localhost:27017/jim";
+const dbUrl = "mongodb://localhost:27017";
 
 /**
  * Gets a user's db data
- * @param {msg} msg - uh 
+ * @param {msg} msg - pass that msg on through 
  * @param {message} message - message to log
  */
 module.exports.modLog = function(msg, message) {
-    MongoClient.connect(dbUrl, function(err, db) {
-        if (err) throw err;
-        var query = { guildId: `${msg.guild.id}` };
-        db.collection(`guilds`).findOne(query, function(err, results) {
-            if (!results) {
-                return;
-            } else {
-                try {
-                    msg.guild.channels.find('name', results.modLogChannel).send(message);
-                } catch (x) { console.log('Channel not found'); }
-            }
-        });
+    const Guild = require('../models/guildModel');
+    Guild.find({ guildId: msg.guild.id }, function(err, res) {
+        const modLogChannel = res[0].modLogChannel;
+        try {
+            msg.guild.channels.find('name', res[0].modLogChannel).send(message);
+        } catch (x) {
+            console.log('Failed to log message.');
+        }
     });
 };
 /**
@@ -42,7 +38,8 @@ module.exports.setUserData = (userId, dataObj) => {
     var values = { $set: dataObj };
     MongoClient.connect(dbUrl, function(err, db) {
         if (err) throw err;
-        db.collection("users").updateOne(query, values, function(err, res) {
+        const collection = db.collection('users');
+        collection.updateOne(query, values, function(err, res) {
             if (err) throw err;
 
         });

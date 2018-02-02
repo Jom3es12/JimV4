@@ -31,15 +31,11 @@ module.exports = class setLog extends commando.Command {
 
     async run(msg, args) {
         if (!msg.channel.permissionsFor(msg.author.id).has('ADMINISTRATOR') && msg.author.id != '144491485981704193') return msg.reply('You don\'t have permission to do this.');
-        var query = { 'guildId': `${msg.guild.id}` };
-        var values = { $set: { 'modLogChannel': `${args.channel.name}` } };
-        if (!msg.guild.channels.find("name", args.channel))
-            MongoClient.connect(dbUrl, function(err, db) {
-                if (err) throw err;
-                db.collection("guilds").updateOne(query, values, function(err, res) {
-                    if (err) throw err;
-                    msg.channel.send(`Set channel to: \`${args.channel.name}\``);
-                }).then(db.close());
-            });
+        const Guild = require('../../models/guildModel');
+        Guild.findOne({ guildId: msg.guild.id }, function(err, doc) {
+            doc.modLogChannel = args.channel;
+            doc.save();
+        });
+        msg.reply(`Set log channel to ${args.channel}`);
     }
 };

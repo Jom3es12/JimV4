@@ -4,6 +4,7 @@ const oneLine = require('common-tags').oneLine;
 const moment = require('moment');
 const stripIndents = require('common-tags').stripIndents;
 const waitSync = require('wait-sync');
+
 module.exports = class ban extends commando.Command {
     constructor(client) {
         super(client, {
@@ -15,7 +16,7 @@ module.exports = class ban extends commando.Command {
             examples: ['jim ban @user'],
             args: [{
                     key: 'member',
-                    prompt: 'Who are you bannining?',
+                    prompt: 'Who are you banning?',
                     type: 'member',
                 },
                 {
@@ -24,7 +25,6 @@ module.exports = class ban extends commando.Command {
                     prompt: 'Why are you banning this user?',
                     type: 'string',
                 }
-
             ]
         });
     }
@@ -55,7 +55,7 @@ module.exports = class ban extends commando.Command {
         if (args.member.id == msg.author.id) {
             return msg.channel.send('You can\'t ban yourself, are you nuts!');
         }
-        if (msg.guild.members.get(msg.author.id).highestRole.calculatedPosition > args.member.highestRole.calculatedPosition) {
+        if (msg.guild.members.get(msg.author.id).highestRole.calculatedPosition < args.member.highestRole.calculatedPosition) {
             return msg.channel.send('This member is higher than you.');
         }
         if (args.member.id == '147508587382439937') {

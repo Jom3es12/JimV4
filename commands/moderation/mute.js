@@ -1,11 +1,10 @@
 const commando = require('discord.js-commando');
 const oneLine = require('common-tags').oneLine;
 const config = require('../../config.json');
-const apiai = require('apiai');
-const app = apiai(config.diagflowToken);
 const modLog = require('../../tools/dbTools').modLog;
-const muteEmitter = require('../../events/eventBus').muteEmitter;
+const muteEmitter = require('../../events/muteEmitter.js').muteEmitter;
 const moment = require('moment');
+var parseDuration = require(`duration-parser`);
 
 module.exports = class mute extends commando.Command {
     constructor(client) {
@@ -16,6 +15,7 @@ module.exports = class mute extends commando.Command {
             memberName: 'mute',
             description: 'A command to mute users.',
             guildOnly: true,
+            format: '<member> <duration>',
             details: oneLine `
                 
             `,
@@ -31,8 +31,7 @@ module.exports = class mute extends commando.Command {
                     key: 'time',
                     label: 'time',
                     prompt: 'How long are they being muted?',
-                    type: 'string',
-                    default: 'none'
+                    type: 'string'
                 }
             ]
         });
@@ -44,7 +43,6 @@ module.exports = class mute extends commando.Command {
         const member = args.member;
         const muteTime = args.time;
         const channel = msg.channel;
-        if (!msg.channel.permissionsFor(msg.client.user).has('MANAGE_ROLES')) return msg.channel.send('I don\'t have permission to manage roles.');
         if (!msg.channel.permissionsFor(msg.author.id).has('KICK_MEMBERS')) return msg.reply('You don\'t have permission.');
 
         if (!roles.find('name', 'jimmute')) { // make role if doesn't exist also set channel overwrites.
@@ -69,65 +67,40 @@ module.exports = class mute extends commando.Command {
             if (msg.guild.members.get(msg.author.id).highestRole.calculatedPosition < args.member.highestRole.calculatedPosition) {
                 return msg.channel.send('This member is higher than you.');
             }
-            // parse the time   
-            var apiOptions = {
-                sessionId: msg.author.id
+            let endTime;
+            try {
+                endTime = Date.now() + parseDuration(muteTime);
+            } catch (error) {
+                return msg.reply('Not a valid time format.');
+            }
+
+            var muteData = {
+                userId: `${member.user.id}`,
+                endTime: endTime,
+                guildId: `${guild.id}`
             };
-            var request = app.textRequest(args.time, apiOptions);
-
-            request.on('response', function(response) {
-
-                var intent = response.result.metadata.intentName;
-                var resolvedTime = response.result.parameters.duration;
-                var responseText = response.result.fulfillment.speech;
-                if (intent == 'time') {
-
-                    var timeAmount = resolvedTime.amount;
-                    console.log(timeAmount);
-                    var timeUnit = resolvedTime.unit;
-                    console.log(timeUnit);
-                    if (timeUnit == 'ms') {
-                        return channel.send("Please don't use ms.");
-                    }
-                    if (timeUnit == 's');
-                    if (timeUnit == 'min') timeAmount = timeAmount * 60;
-                    if (timeUnit == 'h') timeAmount = timeAmount * 3600;
-                    if (timeUnit == 'day') timeAmount = timeAmount * 86400;
-                    if (timeUnit == 'wk') timeAmount = timeAmount * 604800;
-                    if (timeAmount > 604800) return channel.send('Time must be 1 week or shorter.');
-                    var endTime = Date.now() + timeAmount * 1000;
-                    var muteData = {
-                        userId: `${member.user.id}`,
-                        endTime: endTime,
-                        guildId: `${guild.id}`
-                    };
-                    // emit newMute with the mute data
-                    muteEmitter.emit('newMute', muteData);
-                    var embed = {
-                        "title": "**Muted by: **",
-                        "description": msg.author.username,
-                        "color": 16730890,
-                        "timestamp": moment().format(),
-                        "footer": {
-                            "icon_url": msg.client.user.avatarURL,
-                            "text": "Jimbot"
-                        },
-                        "author": {
-                            "name": member.user.username,
-                            "icon_url": member.user.avatarURL,
-                        },
-                        "fields": [{
-                            "name": "Mute Time",
-                            "value": `${resolvedTime.amount}${timeUnit}`
-                        }]
-                    };
-                    channel.send(`Muted ${member.user.username} for ${resolvedTime.amount}${timeUnit}`);
-                    modLog(msg, { embed: embed });
-                } else {
-                    return channel.send('I don\'t understand the mute time.');
-                }
-            });
-            request.end();
+            // emit newMute with the mute data
+            muteEmitter.emit('newMute', muteData);
+            var embed = {
+                "title": "**Muted by: **",
+                "description": msg.author.username,
+                "color": 16730890,
+                "timestamp": moment().format(),
+                "footer": {
+                    "icon_url": msg.client.user.avatarURL,
+                    "text": "Jimbot"
+                },
+                "author": {
+                    "name": member.user.username,
+                    "icon_url": member.user.avatarURL,
+                },
+                "fields": [{
+                    "name": "Mute Time",
+                    "value": `${muteTime}`
+                }]
+            };
+            channel.send(`Muted ${member.user.username} for ${muteTime}`);
+            modLog(msg, { embed: embed });
         }
     }
 };

@@ -22,7 +22,7 @@ module.exports = class invite extends commando.Command {
             "timestamp": timestamp,
             "fields": [{
                 "name": 'Info',
-                "value": '**[Invite me to your server!](https://jom3.es/jim)** \n[Support Server Link](https://discord.gg/zfCx4X2)'
+                "value": '**[Invite me to your server!](http://jom3.es/jim)** \n[Support Server Link](https://discord.gg/zfCx4X2)'
             }],
             "author": {
                 "icon_url": msg.client.user.avatarURL,

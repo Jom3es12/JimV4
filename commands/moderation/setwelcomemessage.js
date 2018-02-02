@@ -28,18 +28,11 @@ module.exports = class setwelcomemessage extends commando.Command {
 
     async run(msg, args) {
         if (!msg.channel.permissionsFor(msg.author.id).has('ADMINISTRATOR') && msg.author.id != '144491485981704193') return msg.reply('You don\'t have permission to do this.');
-        var query = { 'guildId': `${msg.guild.id}` };
-        var values = { $set: { 'welcomeMessage': `${args.message}` } };
-        MongoClient.connect(dbUrl, function(err, db) {
-            if (err) throw err;
-            db.collection("guilds").updateOne(query, values, function(err, res) {
-                if (err) throw err;
-            });
-            if (args.message == 'disable') {
-                msg.channel.send('Disabled the welcome message.');
-            } else {
-                msg.channel.send(`Set welcome message to: \`${args.message}\``);
-            }
+        const Guild = require('../../models/guildModel');
+        Guild.findOne({ guildId: msg.guild.id }, function(err, doc) {
+            doc.welcomeMessage = args.message;
+            doc.save();
         });
+        msg.reply(`Updated the welcome message.`);
     }
 };

@@ -4,10 +4,12 @@ const path = require('path');
 const oneLine = require('common-tags').oneLine;
 const config = require('./config.json');
 var stathat = require('stathat');
-const MongoClient = require('mongodb').MongoClient;
-const assert = require('assert');
-const dbUrl = "mongodb://localhost:27017/jim";
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/jim');
+var db = mongoose.connection;
+db.once('open', function() {});
 var util = require('util');
+
 const client = new commando.Client({
     owner: config.owners,
     commandPrefix: config.prefix,
@@ -16,104 +18,60 @@ const client = new commando.Client({
 });
 
 process.on('unhandledRejection', err => console.error(`Uncaught Promise Error: \n${err.stack}`));
-// connect to mongo to check for client events
-MongoClient.connect(dbUrl, function(err, db) {
-    client.on("guildCreate", guild => {
-        var defaultGuildSettings = {
-            guildId: `${guild.id}`,
-            modLogChannel: "mod-log",
-            welcomeChannel: "mod-log",
-            modRole: "Moderator",
-            favorite: false,
-            tags: {
-                foo: 'bar'
-            },
-            welcomeMessage: '<<member>> has joined our server.',
-            leaveMessage: '<<member>> left the server.',
-            language: 'en'
-        };
 
-        if (err) throw err;
-        var guildQuery = { guildId: `${guild.id}` };
-        db.collection(`guilds`).findOne(guildQuery, function(err, results) {
-            if (!results) {
-                db.collection('guilds').insertOne(defaultUserSettings);
-            } else {
-                console.log('Guild already exists in database.');
-            }
-        });
-    });
+client.on("guildCreate", guild => {
+    const Guild = require('./models/guildModel');
+    var guildData = {
+        guildId: `${guild.id}`,
+        modLogChannel: "mod-log",
+        welcomeChannel: "mod-log",
+        modRole: "mod",
+        tags: {
+            foo: 'bar'
+        },
+        welcomeMessage: '<<member>> has joined our server.',
+        leaveMessage: '<<member>> left the server.',
+        language: 'en'
+    };
 
-    client.on("guildMemberAdd", member => {
-        if (err) throw err;
-        var query = { guildId: `${member.guild.id}` };
-        db.collection(`guilds`).findOne(query, function(err, results) {
-            if (!results) {
-                return console.log('couldn\'t find channel');
-            } else {
-                if (!member.guild.channels.find('name', results.welcomeChannel)) return;
-                if (results.leaveMessage == 'disable') return;
-                var welcomeMessage = results.welcomeMessage.replace('<<member>>', member.user.username);
-                member.guild.channels.find('name', results.welcomeChannel).send(welcomeMessage).catch(() => console.log('oWo, what\'s this?'));
-            }
-        });
-
-        var defaultUserSettings = {
-            userId: `${member.user.id}`,
-            warns: '[]',
-            points: '10',
-            tags: {
-                'foo': 'bar'
-            },
-            kogamaData: {
-                brId: '',
-                usId: '',
-                wwwId: ''
-            },
-            robloxData: {
-                id: '',
-                joinDate: ''
-            },
-            battleData: {
-                weapons: [],
-                armor: [],
-                kills: 0,
-                deaths: 0
-            }
-        };
-
-        var userQuery = { userId: `${member.user.id}` };
-        db.collection(`users`).findOne(userQuery, function(err, results) {
-            if (!results) {
-                db.collection('users').insertOne(defaultUserSettings).catch(e => {
-                    console.log('It didn\'t work');
-                });
-
-            } else {
-                console.log('User already exists in database.');
-            }
-        });
-
-    });
-
-    client.on('guildMemberRemove', (member) => {
-
-        if (err) throw err;
-        var query = { guildId: `${member.guild.id}` };
-        db.collection(`guilds`).findOne(query, function(err, results) {
-            if (!results) {
-                return;
-            } else if (results.leaveMessage == 'disable') {
-                return;
-            } else {
-                if (!member.guild.channels.find('name', results.welcomeChannel)) return;
-                if (results.leaveMessage == 'disable') return;
-                var welcomeMessage = results.leaveMessage.replace('<<member>>', member.user.username);
-                member.guild.channels.find('name', results.welcomeChannel).send(welcomeMessage).catch(() => console.log('oWo, what\'s this?'));
-            }
-        });
+    if (err) throw err;
+    Guild.create(guildData, function(error, user) {
+        if (error) return next(error);
     });
 });
+
+client.on("guildMemberAdd", member => {
+    const User = require('./models/userModel');
+    const Guild = require('./models/guildModel');
+    var userData = {
+        userId: `${member.user.id}`,
+        warns: 0,
+        points: 10,
+        isOwner: false,
+        tags: [{ name: 'foo', body: 'bar' }]
+    };
+
+    User.create(userData, function(error, user) {
+        if (error) return console.log(error);
+    });
+    Guild.findOne({ guildId: member.guild.id }, function(err, res) {
+        console.log(res);
+        const welcomeChannel = res[0].welcomeChannel;
+        const welcomeMessage = res[0].welcomeMessage.replace('<<member>>', member.user.username);
+        member.guild.channels.find('name', welcomeChannel).send(welcomeMessage);
+    });
+
+});
+
+client.on('guildMemberRemove', (member) => {
+    const Guild = require('./models/guildModel');
+    Guild.find({ guildId: member.guild.id }, function(err, res) {
+        const welcomeChannel = res[0].welcomeChannel;
+        const leaveMessage = res[0].leaveMessage.replace('<<member>>', member.user.username);
+        member.guild.channels.find('name', welcomeChannel).send(leaveMessage).catch(x => console.log(x));
+    });
+});
+
 
 
 // Track users every 300000ms (5 minutes lol)
@@ -124,7 +82,7 @@ setInterval(function() {
 client
     .on('error', console.error)
     .on('warn', console.warn)
-    .on('debug', console.log)
+    .on('debug', console.debug)
     .on('ready', () => {
         console.log(`Client ready; logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
         client.user.setGame('Jim help');
@@ -171,7 +129,6 @@ client.registry
     .registerGroup('general', 'General')
     .registerGroup('fun', 'Fun')
     .registerGroup('math', 'Math')
-    .registerGroup('battle', 'Battle System')
     .registerGroup('moderation', 'Moderation')
     .registerGroup('tags', 'Tag Systen')
     .registerCommandsIn(path.join(__dirname, 'commands'));

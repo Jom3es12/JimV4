@@ -2,32 +2,35 @@ process.title = 'Mute Process';
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const config = require("../config.json");
-var MongoClient = require('mongodb').MongoClient;
-var dbUrl = "mongodb://127.0.0.1:27017/jim";
-var muteEmitter = require('./eventBus.js').muteEmitter;
-console.log(muteEmitter);
+var muteEmitter = require('./muteEmitter.js').muteEmitter;
+
 
 muteEmitter.on('newMute', muteData => {
-    console.log('newMute!');
-    var { userId, endTime, guildId } = muteData;
-    const guild = client.guilds.get(guildId);
-    const member = guild.members.get(userId);
-    member.addRole(guild.roles.find('name', 'jimmute'));
-    // check every 5s if mute has ended
-    const checkMute = function() {
-        if (Date.now() >= endTime) {
-            muteEmitter.emit('muteEnd', muteData);
+    setInterval(function(muteData) {
+        if (Date.now() >= muteData.endTime) {
+            clearInterval();
+            return muteEmitter.emit('muteEnd', muteData);
+        }
+        if (!member.roles.find('name', 'jimmute')) {
+            clearInterval();
+            return console.log('Member doesn\'t have role.');
         } else return;
-    };
-    setInterval(checkMute, 2500);
+    }, 2500);
+    console.log(muteData);
+    console.log('newMute!');
+    const guild = client.guilds.get(muteData.guildId);
+    const member = guild.members.get(muteData.userId);
+    member.addRole(guild.roles.find('name', 'jimmute')).catch(x => console.log(x));
+
 });
 
 muteEmitter.on('muteEnd', muteData => {
+    console.log('Mute End');
     const guild = client.guilds.get(muteData.guildId);
     const member = guild.members.get(muteData.userId);
     const muteRole = guild.roles.find('name', 'jimmute');
-    if (!member.roles.find('name', 'jimmute')) return console.log('Member doesn\'t have role.');
-    member.removeRole(muteRole, `Unmuted ${member.user.username}.`);
+    if (!member.roles.find('name', 'jimmute')) return;
+    return member.removeRole(muteRole, `Unmuted ${member.user.username}.`);
 });
 
 client.login(config.token);

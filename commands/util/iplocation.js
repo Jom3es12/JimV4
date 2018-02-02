@@ -1,7 +1,6 @@
 const commando = require('discord.js-commando');
 const oneLine = require('common-tags').oneLine;
 const config = require('../../config.json');
-const t = require('../../tools/t.js');
 const stripIndents = require('common-tags').stripIndents;
 
 module.exports = class iplocation extends commando.Command {
