@@ -18,6 +18,10 @@ var userSchema = new mongoose.Schema({
         type: Number,
         required: false
     },
+    birthday: {
+        type: String,
+        required: false
+    },
     tags: [{ name: String, body: String }]
 });
 userSchema.statics.findId = function(id) {

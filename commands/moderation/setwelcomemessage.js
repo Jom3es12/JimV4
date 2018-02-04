@@ -12,6 +12,7 @@ module.exports = class setwelcomemessage extends commando.Command {
             group: 'moderation',
             memberName: 'setwelcomemessage',
             description: 'Sets the welcome message',
+            format: "<message | disable>",
             details: oneLine `
                 Set the message that appears when someone joins your server. \`Use setWelcomeMessage disable\` to disable the welcome message. Use <<member>> in the message to say the member's name.
             `,
@@ -33,6 +34,10 @@ module.exports = class setwelcomemessage extends commando.Command {
             doc.welcomeMessage = args.message;
             doc.save();
         });
-        msg.reply(`Updated the welcome message.`);
+        if (args.message == 'disable') {
+            msg.reply('Disabled the welcome message.');
+        } else {
+            msg.reply(`Updated the welcome message.`);
+        }
     }
 };

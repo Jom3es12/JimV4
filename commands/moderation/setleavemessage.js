@@ -36,7 +36,10 @@ module.exports = class setwelcomemessage extends commando.Command {
             doc.leaveMessage = args.message;
             doc.save();
         });
-        msg.reply(`Updated the leave message.`);
-
+        if (args.message == 'disable') {
+            msg.reply('Disabled the leave message.');
+        } else {
+            msg.reply(`Updated the leave message.`);
+        }
     }
 };
