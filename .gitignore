@@ -13,3 +13,4 @@ config.json
 .jshintrc
 .vscode/
 todo
+RESETALLUSERS.js
